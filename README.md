@@ -8,6 +8,33 @@ The original pl_mpeg sources are vendored **untouched** in `src/`. This
 repository only adds the Odin binding (`pl_mpeg.odin`) and the tooling to build
 and link it.
 
+## Getting the sources
+
+The vendored pl_mpeg sources live in the `src/` submodule. Clone it (pinned to
+the tested commit) with:
+
+```shell
+git clone --depth=1 https://github.com/dssutg/odin-plmpeg
+cd odin-plmpeg
+git submodule update --init --recursive   # pins src/ to a stable commit
+```
+
+The exact commit is recorded in this repository's git index (not in
+`.gitmodules` and not tied to upstream `master`). So even when upstream pl_mpeg
+moves on, a fresh clone always checks `src/` out at a stable commit that this
+binding is tested against. This is to prevent accidental breaking changes of the underlying library API.
+Existing clones that skipped submodules just run the
+`git submodule update` line above to get the same pinned checkout.
+
+Deliberately bumping the pin once upstream has moved:
+
+```shell
+git -C src pull origin master
+git add src && git commit -m "bump pl_mpeg"
+```
+
+Never edit `src/` in place; treat it as an external dependency.
+
 ## Requirements
 
 - [Odin](https://odin-lang.org)
