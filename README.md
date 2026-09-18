@@ -87,7 +87,10 @@ prefix and `_t` suffix are dropped from every identifier:
 ```
 pl_mpeg.odin    Odin binding (package plmpeg)
 pl_mpeg_odin.c  C implementation translation unit for the binding
-build.sh        builds libplmpeg.a
+build.sh        builds libplmpeg.a (Linux/macOS)
+build.bat       builds libplmpeg.a (Windows)
+README.md       this file
+AGENTS.md       guidance for AI agents
 src/            vendored pl_mpeg sources (do not modify)
 ```
 
