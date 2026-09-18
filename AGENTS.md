@@ -59,6 +59,21 @@ ffmpeg -f lavfi -i testsrc=duration=2:size=160x128 -f lavfi -i \
 Renamed procs only fail at link time, so always rebuild + rerun after touching
 `pl_mpeg.odin`.
 
+## Format
+
+Auto-format every Odin source with `odinfmt` after editing, before finishing a
+task:
+
+```sh
+odinfmt -w -path:.   # from the repo root
+```
+
+- `-w` writes the formatted output back to the files.
+- Running it from the repo root covers `pl_mpeg.odin`, `examples/` and any
+  `test_app`.
+- odinfmt only touches `.odin` files, so the vendored C in `src/` is never
+  rewritten. Still, do not edit `src/`.
+
 ## Layout
 
 - `pl_mpeg.odin` — the binding, package `plmpeg`

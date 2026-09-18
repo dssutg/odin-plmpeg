@@ -124,6 +124,8 @@ build.bat       builds libplmpeg.a (Windows)
 README.md       this file
 AGENTS.md       guidance for AI agents
 src/            vendored pl_mpeg sources (do not modify)
+examples/
+  plmpeg_and_sdl2/   minimal MPEG player using this binding and SDL2
 ```
 
 ## License
