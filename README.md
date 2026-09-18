@@ -43,22 +43,24 @@ odin build my_app.odin -extra-linker-flags:"-L<path> -lplmpeg"
 ```
 
 ```odin
-import "core:fmt"
-import plmpeg "..."
+package main
 
-video_cb :: proc "c"(self: ^plmpeg.Plm, frame: ^plmpeg.Frame, user: rawptr) {
-    fmt.println("frame:", frame.width, "x", frame.height, "at", frame.time)
+import plmpeg "..."
+import "core:fmt"
+
+video_cb :: proc "c" (self: ^plmpeg.Plm, frame: ^plmpeg.Frame, user: rawptr) {
+	fmt.println("frame:", frame.width, "x", frame.height, "at", frame.time)
 }
 
 main :: proc() {
-    plm := plmpeg.create_with_filename("video.mpg")
-    defer plmpeg.destroy(plm)
+	plm := plmpeg.create_with_filename("video.mpg")
+	defer plmpeg.destroy(plm)
 
-    plmpeg.set_video_decode_callback(plm, video_cb, nil)
+	plmpeg.set_video_decode_callback(plm, video_cb, nil)
 
-    for plmpeg.has_ended(plm) == 0 {
-        plmpeg.decode(plm, 1.0 / 60.0)
-    }
+	for plmpeg.has_ended(plm) == 0 {
+		plmpeg.decode(plm, 1.0 / 60.0)
+	}
 }
 ```
 
@@ -71,12 +73,12 @@ decode examples lives in the header comment of `pl_mpeg.odin`.
 The package name (`plmpeg`) already provides a namespace, so the C `plm_`
 prefix and `_t` suffix are dropped from every identifier:
 
-| C name                 | Odin name     |
-| ---------------------- | ------------- |
+| C name | Odin name |
+|---|---|
 | `plm_create_with_filename` | `create_with_filename` |
-| `plm_frame_t`          | `Frame`       |
-| `plm_buffer_t`         | `Buffer`      |
-| `plm_samples_t`        | `Samples`     |
+| `plm_frame_t` | `Frame` |
+| `plm_buffer_t` | `Buffer` |
+| `plm_samples_t` | `Samples` |
 | `plm_video_decode_callback` | `Video_Decode_Callback` |
 | `PLM_DEMUX_PACKET_AUDIO_1` | `Packet_Audio_1` |
 

@@ -27,9 +27,7 @@
 // Load a .mpg (MPEG Program Stream) file and decode it with the high-level
 // interface:
 //
-//	video_cb :: proc "c"(self: ^plmpeg.Plm, frame: ^plmpeg.Frame,
-//	                    user: rawptr)
-//	{
+//	video_cb :: proc "c" (self: ^plmpeg.Plm, frame: ^plmpeg.Frame, user: rawptr) {
 //		plmpeg.frame_to_rgb(frame, rgb_buffer, i32(frame.width * 3))
 //	}
 //
@@ -79,37 +77,37 @@ Packet_Video_1 :: 0xE0
 // Opaque object types
 
 // High-level interface combining demuxer and decoders.
-Plm :: struct{}
+Plm :: struct {}
 
 // Data source used by all other interfaces.
-Buffer :: struct{}
+Buffer :: struct {}
 
 // MPEG-PS demuxer.
-Demux :: struct{}
+Demux :: struct {}
 
 // MPEG1 Video ("mpeg1") decoder.
-Video :: struct{}
+Video :: struct {}
 
 // MPEG1 Audio Layer II ("mp2") decoder.
-Audio :: struct{}
+Audio :: struct {}
 
 // -----------------------------------------------------------------------------
 // Callback proc types
 
 // Called by decode() for each decoded video frame.
-Video_Decode_Callback :: #type proc "c"(self: ^Plm, frame: ^Frame, user: rawptr)
+Video_Decode_Callback :: #type proc "c" (self: ^Plm, frame: ^Frame, user: rawptr)
 
 // Called by decode() for each decoded audio frame.
-Audio_Decode_Callback :: #type proc "c"(self: ^Plm, samples: ^Samples, user: rawptr)
+Audio_Decode_Callback :: #type proc "c" (self: ^Plm, samples: ^Samples, user: rawptr)
 
 // Called whenever the buffer needs more data.
-Buffer_Load_Callback :: #type proc "c"(self: ^Buffer, user: rawptr)
+Buffer_Load_Callback :: #type proc "c" (self: ^Buffer, user: rawptr)
 
 // Called whenever the buffer needs to seek.
-Buffer_Seek_Callback :: #type proc "c"(self: ^Buffer, offset: c.size_t, user: rawptr)
+Buffer_Seek_Callback :: #type proc "c" (self: ^Buffer, offset: c.size_t, user: rawptr)
 
 // Called whenever the buffer needs to know its position.
-Buffer_Tell_Callback :: #type proc "c"(self: ^Buffer, user: rawptr) -> c.size_t
+Buffer_Tell_Callback :: #type proc "c" (self: ^Buffer, user: rawptr) -> c.size_t
 
 // -----------------------------------------------------------------------------
 // Public data types
@@ -117,7 +115,7 @@ Buffer_Tell_Callback :: #type proc "c"(self: ^Buffer, user: rawptr) -> c.size_t
 // Demuxed MPEG-PS packet. Maps directly to the MPEG-PES start codes.
 Packet :: struct {
 	type:   c.int, // Packet_* constant
-	pts:    f64,   // presentation time stamp in seconds (Packet_Invalid_Ts if none)
+	pts:    f64, // presentation time stamp in seconds (Packet_Invalid_Ts if none)
 	length: c.size_t,
 	data:   ^u8,
 }
@@ -302,13 +300,7 @@ foreign lib {
 	// Create a buffer instance with custom load/seek/tell callbacks, useful for
 	// file handles that don't use the standard FILE API. Setting the length and
 	// closing/freeing has to be done manually.
-	buffer_create_with_callbacks :: proc(
-		load_callback: Buffer_Load_Callback,
-		seek_callback: Buffer_Seek_Callback,
-		tell_callback: Buffer_Tell_Callback,
-		length: c.size_t,
-		user: rawptr,
-	) -> ^Buffer ---
+	buffer_create_with_callbacks :: proc(load_callback: Buffer_Load_Callback, seek_callback: Buffer_Seek_Callback, tell_callback: Buffer_Tell_Callback, length: c.size_t, user: rawptr) -> ^Buffer ---
 
 	// Create a buffer instance from memory. The bytes are *not* copied. Pass
 	// true to free_when_done to let plmpeg take ownership of the memory.
