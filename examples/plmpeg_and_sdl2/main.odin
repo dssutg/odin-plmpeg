@@ -111,11 +111,15 @@ main :: proc() {
 
 		audio_dev = sdl2.OpenAudioDevice(nil, false, &spec, nil, {})
 		exit_if_failed(audio_dev == 0, "failed to open audio device")
-		defer sdl2.CloseAudioDevice(audio_dev)
 
 		sdl2.PauseAudioDevice(audio_dev, false)
 		// Let enough audio accumulate to cover the device buffer.
 		plmpeg.set_audio_lead_time(plm, f64(spec.samples) / f64(spec.freq))
+	}
+	// defer is block-scoped, so this must live in main's scope, not the
+	// if-block above, or the device would be closed before playback starts.
+	defer if audio_dev != 0 {
+		sdl2.CloseAudioDevice(audio_dev)
 	}
 
 	width := plmpeg.get_width(plm)
