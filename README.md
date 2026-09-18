@@ -68,6 +68,38 @@ Audio works the same way through `plmpeg.set_audio_decode_callback` and
 `plmpeg.Audio_Decode_Callback`. A full usage walkthrough with build, link and
 decode examples lives in the header comment of `pl_mpeg.odin`.
 
+## Converting video with ffmpeg
+
+pl_mpeg only plays MPEG-1 video and MPEG-2 audio inside an MPEG Program
+Stream (`.mpg`), so most source files need converting first.
+
+The codec pair to target is MPEG-1 video (`-c:v mpeg1video`) and MPEG-1/2
+Layer II audio (`-c:a mp2`), wrapped in an MPEG-PS container (`-f mpeg`):
+
+```shell
+ffmpeg -i input.mp4 -c:v mpeg1video -q:v 4 -c:a mp2 -b:a 192k -f mpeg output.mpg
+```
+
+Notes:
+
+- `-q:v` sets MPEG-1 quality (2-31, lower is better; 4 is a good
+  trade-off). `-q:v 0` lets ffmpeg pick the best quality.
+- MPEG-1 does not support modern resolutions well; rescale to a small,
+  normal-PAR size whose width and height are multiples of 16 (e.g.
+  `-vf scale=256:192`). SBG/PAR flags and interlacing are not supported.
+- Keep the audio bitrate at one of the standard MP2 rates (e.g. `32k`,
+  `48k`, `56k`, `64k`, `128k`, `192k`, `256k`, `384k`).
+- Any media (MKV, AVI, WebM, streams, etc.) can be used as input; ffmpeg
+  converts and muxes it into the `.mpg` program stream.
+
+Synthesize a quick test clip when you have no source footage:
+
+```shell
+ffmpeg -f lavfi -i testsrc=duration=2:size=160x128 -f lavfi -i \
+  sine=frequency=440:duration=2 -c:v mpeg1video -q:v 0 -c:a mp2 -b:a 128k \
+  -f mpeg clip.mpg
+```
+
 ### Naming
 
 The package name (`plmpeg`) already provides a namespace, so the C `plm_`
